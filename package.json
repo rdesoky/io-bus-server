@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.3",
-    "io-bus": "https://github.com/rdesoky/io-bus.git"
+    "io-bus": "^0.0.3"
   }
 }
