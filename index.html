@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="/msgbus/web-client.js"></script>
+	<script>
+		var handle_security_status;
+		var msgBus;
+		$(function(){
+			var status_update_handler_id;
+			msgBus = MsgBus("web_app",function(isConnected){
+				if(isConnected){
+					HandleStatusUpdate();
+				}else{
+					status_update_handler_id = false;
+				}
+			});
+			function HandleStatusUpdate(){
+				if($("#HandleStatusUpdate").attr("checked")){
+					if(!status_update_handler_id) {
+						status_update_handler_id = msgBus.on("update_security_status", function (msg) {
+							log(msg);
+						})
+					}
+				}else{
+					msgBus.off(status_update_handler_id);
+					status_update_handler_id = false;
+				}
+			}
+			$("#HandleStatusUpdate").click(HandleStatusUpdate);
+			$("#GetStatus").click(function(){
+				msgBus.request("security_status").then(function(results){
+					log(results);
+				});
+			});
+		});
+		function log(txt){
+			if(typeof txt!= "string"){
+				txt = JSON.stringify(txt);
+			}
+			$("#LogConsole").append("<div class='pre'>" + txt + "</div>");
+		}
+	</script>
+</head>
+<body>
+	<div>
+		<button id="GetStatus">Get Status</button>
+		<span><input type="checkbox" id="HandleStatusUpdate" checked/><label for="HandleStatusUpdate">Listen to Status Update</label></span>
+	</div>
+	<div id="LogConsole">
+
+	</div>
+</body>
+</html>
